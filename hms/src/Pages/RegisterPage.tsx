@@ -3,29 +3,39 @@ import { useForm } from '@mantine/form';
 import { IconHeartbeat } from '@tabler/icons-react'
 import React from 'react'
 import { Link } from 'react-router-dom';
+import { registerUser } from '../Service/UserService';
 
 const RegisterPage = () => {
     const form = useForm({
 
         initialValues: {
             type: 'PATIENT', // Default type can be set to 'Patient' or any other type you prefer
+            name: '',
             email: '',
             password: '',
             confirmPassword: '',
         },
 
         validate: {
+            name: (value: any) => (value.trim() === '' ? 'Name is required' : null),
             email: (value: any) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
             password: (value: any) => (value.length < 6 ? 'Password must be at least 6 characters' : null),
             confirmPassword: (value: any, values: any) => (value !== values.password ? 'Passwords do not match' : null),
         },
     });
-    function handleSubmit(values: { email: string; password: string; }, event: React.FormEvent<HTMLFormElement> | undefined): void {
-        event?.preventDefault();
-        // Here you would typically send a request to your backend API for authentication
-        // For demonstration, we'll just log the values
+    function handleSubmit(values: {
+        name: string; type: string; email: string; password: string; confirmPassword: string
+    }) {
         console.log('Register submitted:', values);
-        // You can add navigation or error handling here as needed
+        registerUser({
+            name: values.name,
+            email: values.email,
+            password: values.password
+        }).then((response) => {
+            console.log('Registration successful:', response);
+        }).catch((error: any) => {
+            console.error('Registration failed:', error);
+        });
     }
 
     return (
@@ -38,6 +48,33 @@ const RegisterPage = () => {
                 <form onSubmit={form.onSubmit(handleSubmit)} className='flex flex-col gap-5 '>
                     <div className='text-xl font-bold self-center'>Register </div>
                     <SegmentedControl {...form.getInputProps('type')} fullWidth size="md" radius="md" color='primary' bg='none' border-white data={[{ label: 'Admin', value: 'ADMIN' }, { label: 'Patient', value: 'PATIENT' }, { label: 'Doctor', value: 'DOCTOR' }]} />
+                    <TextInput {...form.getInputProps('name')}
+                        variant="unstyled"
+                        size="md"
+                        radius="md"
+                        placeholder="Name"
+
+                        styles={{
+                            input: {
+                                color: 'black', // prevents red text on error
+                                backgroundColor: '#f3f4f6', // same as gray-100
+                                border: '1px solid #d1d5db', // gray-300
+                                borderRadius: '0.375rem', // rounded-md
+                                padding: '0.5rem 1rem',
+
+                                '::placeholder': {
+                                    color: '#9ca3af', // Tailwind gray-400
+                                    opacity: 1,       // Ensure color shows properly
+                                },
+                            },
+                            error: {
+                                color: '#ef4444', // red-500
+                                fontSize: '0.875rem',
+                                marginTop: '0.25rem',
+                            },
+                        }}
+                        {...form.getInputProps('name')}
+                    />
                     <TextInput {...form.getInputProps('email')}
                         variant="unstyled"
                         size="md"
@@ -51,6 +88,11 @@ const RegisterPage = () => {
                                 border: '1px solid #d1d5db', // gray-300
                                 borderRadius: '0.375rem', // rounded-md
                                 padding: '0.5rem 1rem',
+
+                                '::placeholder': {
+                                    color: '#9ca3af', // Tailwind gray-400
+                                    opacity: 1,       // Ensure color shows properly
+                                },
                             },
                             error: {
                                 color: '#ef4444', // red-500
@@ -73,6 +115,10 @@ const RegisterPage = () => {
                                 border: '1px solid #d1d5db',
                                 borderRadius: '0.375rem',
                                 padding: '0.5rem 1rem',
+                                '::placeholder': {
+                                    color: '#9ca3af', // Tailwind gray-400
+                                    opacity: 1,       // Ensure color shows properly
+                                },
                             },
                             error: {
                                 color: '#ef4444',
@@ -96,6 +142,10 @@ const RegisterPage = () => {
                                 border: '1px solid #d1d5db',
                                 borderRadius: '0.375rem',
                                 padding: '0.5rem 1rem',
+                                '::placeholder': {
+                                    color: '#9ca3af', // Tailwind gray-400
+                                    opacity: 1,       // Ensure color shows properly
+                                },
                             },
                             error: {
                                 color: '#ef4444',
@@ -104,7 +154,7 @@ const RegisterPage = () => {
                             },
                         }}
 
-                        {...form.getInputProps('password')}
+                        {...form.getInputProps('confirmPassword')}
                     />
 
                     <button className='bg-primary-400 text-white font-semibold text-lg py-2 rounded-md hover:bg-primary-500 transition-colors duration-300'>Register</button>
@@ -117,5 +167,5 @@ const RegisterPage = () => {
     )
 }
 
-export default RegisterPage
+export default RegisterPage;
 

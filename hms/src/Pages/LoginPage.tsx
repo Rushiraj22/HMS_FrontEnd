@@ -17,8 +17,7 @@ const LoginPage = () => {
             password: (value: any) => (value.length < 6 ? 'Password must be at least 6 characters' : null),
         },
     });
-    function handleSubmit(values: { email: string; password: string; }, event: React.FormEvent<HTMLFormElement> | undefined): void {
-        event?.preventDefault();
+    function handleSubmit(values: { email: string; password: string; }) {
         // Here you would typically send a request to your backend API for authentication
         // For demonstration, we'll just log the values
         console.log('Login submitted:', values);
