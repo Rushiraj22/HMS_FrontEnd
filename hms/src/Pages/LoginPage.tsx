@@ -2,9 +2,12 @@ import { PasswordInput, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form';
 import { IconHeartbeat } from '@tabler/icons-react'
 import React from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { loginUser } from '../Service/UserService';
+import { errorNotifications, successNotifications } from '../Utility/NotificationUtils';
 
 const LoginPage = () => {
+    const navigate = useNavigate();
     const form = useForm({
 
         initialValues: {
@@ -18,10 +21,19 @@ const LoginPage = () => {
         },
     });
     function handleSubmit(values: { email: string; password: string; }) {
-        // Here you would typically send a request to your backend API for authentication
-        // For demonstration, we'll just log the values
         console.log('Login submitted:', values);
-        // You can add navigation or error handling here as needed
+        loginUser({
+            email: values.email,
+            password: values.password
+        }).then((response) => {
+            console.log('Login successful:', response);
+            successNotifications('Login successful!');
+            navigate('/dashboard'); // Redirect to the dashboard or home page after successful login
+            // Handle successful login, e.g., redirect or store user data
+        }).catch((error: any) => {
+            console.error('Login failed:', error);
+            errorNotifications(error.response?.data?.errorMessage);
+        });
     }
 
     return (

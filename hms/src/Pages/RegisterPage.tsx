@@ -2,10 +2,12 @@ import { PasswordInput, SegmentedControl, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form';
 import { IconHeartbeat } from '@tabler/icons-react'
 import React from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { registerUser } from '../Service/UserService';
+import { errorNotifications, successNotifications } from '../Utility/NotificationUtils';
 
 const RegisterPage = () => {
+    const navigate = useNavigate();
     const form = useForm({
 
         initialValues: {
@@ -33,8 +35,11 @@ const RegisterPage = () => {
             password: values.password
         }).then((response) => {
             console.log('Registration successful:', response);
+            successNotifications('Registration successful!');
+            navigate('/login');
         }).catch((error: any) => {
             console.error('Registration failed:', error);
+            errorNotifications(error.response?.data?.errorMessage);
         });
     }
 
